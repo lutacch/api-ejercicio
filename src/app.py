@@ -10,6 +10,7 @@ from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User
 #from models import Person
+import requests
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
@@ -36,14 +37,48 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
-def handle_hello():
+@app.route('/people', methods=['GET'])
+def handle_people():
+    people_response = requests.get("https://swapi.dev/api/people")
+    results = people_response.json()["results"]
+    new_results = []
+    for i in results: 
+        new_results.append(i["name"])
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+    new_height = []
+    for i in results:
+        new_height.append(i["height"])
 
-    return jsonify(response_body), 200
+    return jsonify(new_results, new_height), 200
+
+@app.route('/planets', methods=['GET'])
+def handle_planets():
+    people_response = requests.get("https://swapi.dev/api/planets")
+    results = people_response.json()["results"]
+    new_results = []
+    for i in results: 
+        new_results.append(i["name"])
+
+    new_climate = []
+    for i in results:
+        new_climate.append(i["climate"])
+
+    return jsonify(new_results, new_climate), 200
+
+@app.route("/species", methods=["GET"])
+def handle_species():
+    species_response = requests.get("https://swapi.dev/api/species")
+    results = species_response.json()["results"]
+    new_results = []
+    for i in results:
+        new_results.append(i["name"])
+    
+    new_language = []
+    for i in results:
+        new_language.append(i["language"])
+
+
+    return jsonify(new_results, new_language), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
